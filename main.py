@@ -37,20 +37,22 @@ vid, pid = "2341", "8036" # Change to match yours
 arduino_port = find_arduino(vid, pid) 
 baud_rate = 9600
 
-# Inicia la conexión serial con el Arduino
+# Open serial connection
 ser = serial.Serial(arduino_port, baud_rate)
-time.sleep(2)  # Espera 2 segundos para que la conexión serial se establezca
+time.sleep(1)  # Wait to set the connection
 
 # Store local time
 local_time = int(time.mktime(time.localtime()))
 
-# Enviar comandos al Arduino para encender y apagar el LEDc
+# Send the wake up text, then local time, finally the main menu
 try:
     ser.write(b"_OK\n")
     ser.write(f"{local_time}\n".encode('utf-8'))
     time.sleep(1)
 
     menu_change(menu.main)
+    
+    # Main loop
     while True:
         if ser.in_waiting > 0:  # Comprobar si hay datos disponibles para leer
             key = ser.readline().decode('utf-8').strip()  # Leer y decodificar el dato
